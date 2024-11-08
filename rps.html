@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stone Paper Scissors</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #e0f2f1;
+            color: #37474f;
+        }
+        .game-container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin-bottom: 1rem;
+            color: #00796b;
+        }
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        button {
+            background-color: #4db6ac;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        button:hover {
+            background-color: #26a69a;
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        #result {
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+        #score {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Stone Paper Scissors</h1>
+        <div class="choices">
+            <button onclick="play('stone')" aria-label="Stone">✊</button>
+            <button onclick="play('paper')" aria-label="Paper">✋</button>
+            <button onclick="play('scissors')" aria-label="Scissors">✌️</button>
+        </div>
+        <div id="result"></div>
+        <div id="score">Player: 0 - Computer: 0</div>
+    </div>
+
+    <script>
+        let playerScore = 0;
+        let computerScore = 0;
+
+        function computerChoice() {
+            const choices = ['stone', 'paper', 'scissors'];
+            return choices[Math.floor(Math.random() * choices.length)];
+        }
+
+        function play(playerSelection) {
+            const computerSelection = computerChoice();
+            const result = getResult(playerSelection, computerSelection);
+            updateScore(result);
+            displayResult(playerSelection, computerSelection, result);
+        }
+
+        function getResult(player, computer) {
+            if (player === computer) return 'tie';
+            if (
+                (player === 'stone' && computer === 'scissors') ||
+                (player === 'paper' && computer === 'stone') ||
+                (player === 'scissors' && computer === 'paper')
+            ) {
+                return 'win';
+            }
+            return 'lose';
+        }
+
+        function updateScore(result) {
+            if (result === 'win') playerScore++;
+            if (result === 'lose') computerScore++;
+            document.getElementById('score').textContent = `Player: ${playerScore} - Computer: ${computerScore}`;
+        }
+
+        function displayResult(player, computer, result) {
+            const resultDiv = document.getElementById('result');
+            let message = `You chose ${getIcon(player)}, computer chose ${getIcon(computer)}. `;
+            
+            switch (result) {
+                case 'win':
+                    message += 'You win!';
+                    break;
+                case 'lose':
+                    message += 'You lose!';
+                    break;
+                case 'tie':
+                    message += "It's a tie!";
+                    break;
+            }
+            
+            resultDiv.textContent = message;
+        }
+
+        function getIcon(choice) {
+            switch (choice) {
+                case 'stone':
+                    return '✊';
+                case 'paper':
+                    return '✋';
+                case 'scissors':
+                    return '✌️';
+                default:
+                    return '';
+            }
+        }
+    </script>
+</body>
+</html>

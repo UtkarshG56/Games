@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whack-a-Mole Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+        .game-container {
+            width: 300px;
+            height: 300px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .hole {
+            background-color: #654321;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+        }
+        .mole {
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23964B00"/><circle cx="30" cy="30" r="10" fill="%23000"/><circle cx="70" cy="30" r="10" fill="%23000"/><path d="M 30 70 Q 50 80 70 70" stroke="%23000" stroke-width="5" fill="none"/></svg>');
+            background-size: cover;
+            position: absolute;
+            bottom: 100%;
+            transition: bottom 0.1s;
+            cursor: pointer;
+        }
+        .mole.show {
+            bottom: 0;
+        }
+        #score, #time {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        #start-btn {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Whack-a-Mole</h1>
+    <div id="score">Score: 0</div>
+    <div id="time">Time: 30s</div>
+    <div class="game-container" id="game-container"></div>
+    <button id="start-btn">Start Game</button>
+
+    <script>
+        const gameContainer = document.getElementById('game-container');
+        const scoreDisplay = document.getElementById('score');
+        const timeDisplay = document.getElementById('time');
+        const startButton = document.getElementById('start-btn');
+
+        let score = 0;
+        let timeLeft = 30;
+        let gameInterval;
+        let moleInterval;
+
+        function createHoles() {
+            for (let i = 0; i < 9; i++) {
+                const hole = document.createElement('div');
+                hole.classList.add('hole');
+                const mole = document.createElement('div');
+                mole.classList.add('mole');
+                mole.addEventListener('click', whackMole);
+                hole.appendChild(mole);
+                gameContainer.appendChild(hole);
+            }
+        }
+
+        function showMole() {
+            const moles = document.querySelectorAll('.mole');
+            const randomMole = moles[Math.floor(Math.random() * moles.length)];
+            randomMole.classList.add('show');
+            setTimeout(() => {
+                randomMole.classList.remove('show');
+            }, 1000);
+        }
+
+        function whackMole() {
+            if (this.classList.contains('show')) {
+                score++;
+                scoreDisplay.textContent = `Score: ${score}`;
+                this.classList.remove('show');
+            }
+        }
+
+        function updateTime() {
+            timeLeft--;
+            timeDisplay.textContent = `Time: ${timeLeft}s`;
+            if (timeLeft === 0) {
+                endGame();
+            }
+        }
+
+        function startGame() {
+            score = 0;
+            timeLeft = 30;
+            scoreDisplay.textContent = 'Score: 0';
+            timeDisplay.textContent = 'Time: 30s';
+            startButton.disabled = true;
+            gameInterval = setInterval(updateTime, 1000);
+            moleInterval = setInterval(showMole, 1000);
+        }
+
+        function endGame() {
+            clearInterval(gameInterval);
+            clearInterval(moleInterval);
+            startButton.disabled = false;
+            alert(`Game Over! Your score: ${score}`);
+        }
+
+        createHoles();
+        startButton.addEventListener('click', startGame);
+    </script>
+</body>
+</html>
